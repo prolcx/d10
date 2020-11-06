@@ -6,6 +6,8 @@ const mysql = require('mysql2/promise');
 const { parse } = require('path');
 const fetch = require('node-fetch')
 const withQuery = require('with-query').default
+const morgan = require('morgan')
+
 
 // configure port
 const PORT = parseInt(process.argv[2]) || parseInt(process.env.PORT) || 3000
@@ -38,7 +40,7 @@ const pool = mysql.createPool({
 //SQL code
 
 const alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9']
-const SQL_TITLE = 'select * from book2018 where title REGEXP ?'
+const SQL_TITLE = 'select * from book2018 where title REGEXP ? limit ? offset ?'
 const SQL_BOOK_ID = 'select * from book2018 where book_id = ?'
 
 // API parameter
@@ -47,6 +49,11 @@ const API_KEY = process.env.API_KEY
 
 // create instance of application
 const app = express()
+
+// Use Morgan for logging
+
+app.use(morgan('combined'))
+
 
 // configure handlebars
 app.engine('hbs', handlebars({defaultLayout: 'default.hbs'}))
@@ -65,11 +72,15 @@ app.get('/', (req, resp)=>{
 //list of books
 app.get('/search/:cap', async (req,resp)=>{
     const cap =req.params['cap']
-    const conn = await pool.getConnection()
+    const offset = parseInt(req.query['offset']) || 0
+    const limit = 10
+
+    
 
     try{
+        const conn = await pool.getConnection()
         const titleName = []
-        const results = await conn.query(SQL_TITLE, [`^[${cap}].*$`])
+        const results = await conn.query(SQL_TITLE, [`^[${cap}].*$`, limit, offset])
         console.info(results[0])
         const recs = results[0]
         console.info(recs)
@@ -82,7 +93,10 @@ app.get('/search/:cap', async (req,resp)=>{
 
             resp.status(200)
             resp.type('text/html')
-            resp.render('result',{titleName, cap})
+            resp.render('result',{
+                titleName, cap,
+                prevOffset: Math.max(0, offset - limit),
+                nextOffest: offset + limit })
         }   
            
     } catch(e) {
@@ -106,8 +120,21 @@ app.get('/search/detail/:id', async (req,resp)=>{
         d = results2[0]   
 
         resp.status(200)
-        resp.type('text/html')
-        resp.render('detail',{d,id})
+        resp.format({
+            'text/html': () => {
+                resp.type('text/html')
+                resp.render('detail',{d,id})
+            },
+            'application/json': () => {
+                resp.type('application/json')
+                resp.json(d,id)
+            }
+        })
+
+
+
+
+        
                    
     } catch(e) {
 		console.error('ERROR: ', e)
@@ -148,6 +175,8 @@ app.get('/search/detail/review/:title', (req, resp)=>{
     })
 
 })
+
+
 
 
 

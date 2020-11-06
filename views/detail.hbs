@@ -6,6 +6,11 @@
 <h5>Rating: {{this.rating}} ({{rating_count}})</h5>
 <h5>Genres: {{this.genres}}</h5>
 <p>{{this.description}}</p> <br>
-<a href="{{root}}review/{{this.title}}">Find Review</a>
+<a href="{{root}}review/{{this.title}}">Find Review</a> <br>
 {{/each}}
+<td>
+    <form method="GET" action="/">
+        <button type="submit">Home</button>
+    </form>
 
+</td>
