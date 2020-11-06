@@ -74,7 +74,9 @@ app.get('/search/:cap', async (req,resp)=>{
     const cap =req.params['cap']
     const offset = parseInt(req.query['offset']) || 0
     const limit = 10
-
+    const nextOffset = offset + limit
+    const prevOffset= Math.max(0, offset - limit)
+    console.info(prevOffset)
     
 
     try{
@@ -91,13 +93,13 @@ app.get('/search/:cap', async (req,resp)=>{
             const c = a.book_id
             titleName.push({b,c})
 
-            resp.status(200)
+        }
+        resp.status(200)
             resp.type('text/html')
             resp.render('result',{
                 titleName, cap,
-                prevOffset: Math.max(0, offset - limit),
-                nextOffest: offset + limit })
-        }   
+                prevOffset,
+                nextOffset })   
            
     } catch(e) {
 		console.error('ERROR: ', e)
@@ -130,12 +132,7 @@ app.get('/search/detail/:id', async (req,resp)=>{
                 resp.json(d,id)
             }
         })
-
-
-
-
-        
-                   
+       
     } catch(e) {
 		console.error('ERROR: ', e)
 		resp.status(500)
