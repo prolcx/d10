@@ -1,0 +1,11 @@
+
+{{#each review}}
+<h1>{{this.book_title}}</h1>
+<h3>by {{this.book_author}}</h3>
+<h3>Reviewer: {{this.byline}}</h3>
+<h3>Date: {{this.publication_dt}}</h3>
+<h4>{{this.summary}}</h4>
+<a href="{{this.url}}" target="_blank">Full Review</a>
+<h5>{{this.copyright}}</h5>
+
+{{/each}}

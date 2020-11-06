@@ -1,0 +1,11 @@
+{{#each d}}
+<img src="{{this.image_url}}" alt="">
+<h1>{{this.title}}</h1>
+<h4>by {{this.authors}}</h4>
+<h5>Pages: {{this.pages}}</h5>
+<h5>Rating: {{this.rating}} ({{rating_count}})</h5>
+<h5>Genres: {{this.genres}}</h5>
+<p>{{this.description}}</p> <br>
+<a href="{{root}}review/{{this.title}}">Find Review</a>
+{{/each}}
+

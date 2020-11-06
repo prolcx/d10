@@ -1,0 +1,14 @@
+<h1>List of Books</h1>
+
+{{#each alphabet}}
+<div class="row row-cols-5 row-cols-md-3">
+  <div class="col mb-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title"><a href="{{root}}search/{{this}}">{{this}}</a></h5>
+      </div>
+    </div>
+  </div>
+ </div>
+{{/each}}
+
