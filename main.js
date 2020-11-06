@@ -129,7 +129,7 @@ app.get('/search/detail/:id', async (req,resp)=>{
             },
             'application/json': () => {
                 resp.type('application/json')
-                resp.json(d,id)
+                resp.json(d)
             }
         })
        
